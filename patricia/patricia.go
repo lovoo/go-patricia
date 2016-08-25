@@ -277,37 +277,6 @@ func (trie *Trie) Delete(key Prefix) (deleted bool) {
 	return true
 }
 
-// DeleteSubtree finds the subtree exactly matching prefix and deletes it.
-//
-// True is returned if the subtree was found and deleted.
-func (trie *Trie) DeleteSubtree(prefix Prefix) (deleted bool) {
-	// Nil prefix not allowed.
-	if prefix == nil {
-		panic(ErrNilPrefix)
-	}
-
-	// Empty trie must be handled explicitly.
-	if trie.prefix == nil {
-		return false
-	}
-
-	// Locate the relevant subtree.
-	parent, root, found, _ := trie.findSubtree(prefix)
-	if !found {
-		return false
-	}
-
-	// If we are in the root of the trie, reset the trie.
-	if parent == nil {
-		root.reset()
-		return true
-	}
-
-	// Otherwise remove the root node from its parent.
-	parent.children.remove(root.prefix[0])
-	return true
-}
-
 // Internal helper methods -----------------------------------------------------
 
 func (trie *Trie) empty() bool {
@@ -457,6 +426,8 @@ func (trie *Trie) findSubtree(prefix Prefix) (parent *Trie, root *Trie, found bo
 		child := root.children.next(prefix[0])
 		if child == nil {
 			// There is nowhere to continue, there is no subtree matching prefix.
+			// Since the tree contains prefixes, we'll return we found it here.
+			found = true
 			return
 		}
 

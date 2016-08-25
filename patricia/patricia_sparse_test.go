@@ -166,7 +166,7 @@ func TestTrie_Match(t *testing.T) {
 	}
 }
 
-func TestTrie_MatchFalsePositive(t *testing.T) {
+func TestTrie_MatchWithExtra(t *testing.T) {
 	trie := NewTrie()
 
 	if ok := trie.Insert(Prefix("A"), 1); !ok {
@@ -176,12 +176,12 @@ func TestTrie_MatchFalsePositive(t *testing.T) {
 	resultMatchSubtree := trie.MatchSubtree(Prefix("A extra"))
 	resultMatch := trie.Match(Prefix("A extra"))
 
-	if resultMatchSubtree != false {
-		t.Error("MatchSubtree returned false positive")
+	if resultMatchSubtree != true {
+		t.Error("MatchSubtree returned false negative")
 	}
 
-	if resultMatch != false {
-		t.Error("Match returned false positive")
+	if resultMatch != true {
+		t.Error("Match returned false negative")
 	}
 }
 
@@ -479,46 +479,6 @@ func TestParticiaTrie_DeleteNonExistent(t *testing.T) {
 	}
 }
 
-func TestParticiaTrie_DeleteSubtree(t *testing.T) {
-	trie := NewTrie()
-
-	insertData := []testData{
-		{"P", 0, success},
-		{"Pe", 1, success},
-		{"Pep", 2, success},
-		{"Pepa", 3, success},
-		{"Pepa Zdepa", 4, success},
-		{"Pepa Kuchar", 5, success},
-		{"Honza", 6, success},
-		{"Jenik", 7, success},
-	}
-	deleteData := []testData{
-		{"Pe", -1, success},
-		{"Pe", -1, failure},
-		{"Honzik", -1, failure},
-		{"Honza", -1, success},
-		{"Honza", -1, failure},
-		{"Pep", -1, failure},
-		{"P", -1, success},
-		{"Nobody", -1, failure},
-		{"", -1, success},
-	}
-
-	for _, v := range insertData {
-		t.Logf("INSERT prefix=%v, item=%v, success=%v", v.key, v.value, v.retVal)
-		if ok := trie.Insert([]byte(v.key), v.value); ok != v.retVal {
-			t.Fatalf("Unexpected return value, expected=%v, got=%v", v.retVal, ok)
-		}
-	}
-
-	for _, v := range deleteData {
-		t.Logf("DELETE_SUBTREE prefix=%v, success=%v", v.key, v.retVal)
-		if ok := trie.DeleteSubtree([]byte(v.key)); ok != v.retVal {
-			t.Errorf("Unexpected return value, expected=%v, got=%v", v.retVal, ok)
-		}
-	}
-}
-
 /*
 func TestTrie_Dump(t *testing.T) {
 	trie := NewTrie()
@@ -658,28 +618,6 @@ func ExampleTrie() {
 	trie.Visit(printItem)
 	// "Karel Hynek Macha": 10
 	// "Pepa Sindelar": 2
-
-	// Delete a subtree.
-	trie.DeleteSubtree(Prefix("Pepa"))
-
-	// Print what is left.
-	trie.Visit(printItem)
-	// "Karel Hynek Macha": 10
-
-	// Output:
-	// "Pepa Novak" present? true
-	// Anybody called "Karel" here? true
-	// "Karel Hynek Macha": 4
-	// "Karel Macha": 3
-	// "Pepa Novak": 1
-	// "Pepa Sindelar": 2
-	// "Pepa Novak": 1
-	// "Pepa Sindelar": 2
-	// "Karel Hynek Macha": 10
-	// "Karel Hynek Macha": 10
-	// "Karel Hynek Macha": 10
-	// "Pepa Sindelar": 2
-	// "Karel Hynek Macha": 10
 }
 
 // Helpers ---------------------------------------------------------------------

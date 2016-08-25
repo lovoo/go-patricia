@@ -6,6 +6,18 @@ Status](https://drone.io/github.com/tchap/go-patricia/status.png)](https://drone
 **Test Coverage**: [![Coverage
 Status](https://coveralls.io/repos/tchap/go-patricia/badge.png)](https://coveralls.io/r/tchap/go-patricia)
 
+
+---------------------
+
+## Fork Modification
+
+** This Fork modifies the tree behavior in a way that it will match extra data too.**
+
+So after inserting *abc* into the tree, it will also match *abcdef*
+
+---------------------
+
+
 ## About ##
 
 A generic patricia trie (also called radix tree) implemented in Go (Golang).
